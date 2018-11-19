@@ -1,6 +1,8 @@
 document.getElementById("getText").addEventListener("click", getText);
 document.getElementById("getFighters").addEventListener("click", getFighters);
+document.getElementById("getMoreFighters").addEventListener("click", getMoreFighters);
 document.getElementById("getPosts").addEventListener("click", getPosts);
+document.getElementById('addPost').addEventListener('submit', addPost);
 
 function getText() {
   fetch("ufc.txt")
@@ -29,6 +31,24 @@ function getFighters() {
     });
 }
 
+function getMoreFighters() {
+    fetch("http://ufc-data-api.ufc.com/api/v3/us/fighters/title_holders")
+      .then(res => res.json())
+      .then(data => {
+        let output = "<h2>Title Holders</h2>";
+        data.forEach(function(title_holder) {
+          output += `
+                <ul>
+                <li>Division: ${title_holder.weight_class}</li>
+                <li>NAME: ${title_holder.first_name} ${title_holder.last_name}</li>
+               
+                </ul>
+                `;
+        });
+        document.getElementById("output").innerHTML = output;
+      });
+  }
+
 function getPosts() {
     fetch("https://jsonplaceholder.typicode.com/posts")
       .then(res => res.json())
@@ -44,4 +64,22 @@ function getPosts() {
         });
         document.getElementById("output").innerHTML = output;
       });
+  }
+
+  function addPost(e){
+    e.preventDefault();
+
+    let title = document.getElementById('title').value;
+    let body = document.getElementById('body').value;
+
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+      method:'POST',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-type':'application/json'
+      },
+      body:JSON.stringify({title:title, body:body})
+    })
+    .then((res) => res.json())
+    .then((data) => console.log(data))
   }
